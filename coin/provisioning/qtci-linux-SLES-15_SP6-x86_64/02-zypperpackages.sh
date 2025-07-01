@@ -8,15 +8,15 @@ sudo zypper -nq install elfutils binutils
 
 sudo zypper addrepo --no-gpgcheck http://repo-clones.ci.qt.io/repos/opensuse/repositories/devel/gcc/SLE-15/devel:gcc.repo
 sudo zypper refresh
-sudo zypper -nq install --force-resolution gcc10 gcc10-c++
+sudo zypper -nq install --force-resolution gcc11 gcc11-c++
 
 # Make sure needed ca-certificates are available
 sudo zypper -nq install ca-certificates
 
-sudo /usr/sbin/update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 1 \
-                                     --slave /usr/bin/g++ g++ /usr/bin/g++-10 \
-                                     --slave /usr/bin/cc cc /usr/bin/gcc-10 \
-                                     --slave /usr/bin/c++ c++ /usr/bin/g++-10
+sudo /usr/sbin/update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 1 \
+                                     --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
+                                     --slave /usr/bin/cc cc /usr/bin/gcc-11 \
+                                     --slave /usr/bin/c++ c++ /usr/bin/g++-11
 
 sudo zypper -nq install git ninja make patch wget tar
 
@@ -94,9 +94,6 @@ sudo zypper -nq update open-vm-tools
 # Tools to build Git
 sudo zypper -nq install autoconf libcurl-devel libexpat-devel
 
-# used for reading vcpkg packages version, from vcpkg.json
-sudo zypper -nq install jq
-
 # zip, needed for vcpkg caching
 sudo zypper -nq install zip
 
@@ -113,7 +110,10 @@ sudo zypper -nq install cifs-utils
 # For Firebird in RTA
 sudo zypper -nq install libtommath-devel
 
-gccVersion="$(gcc --version |grep gcc |cut -b 17-23)"
+# For tst_license.pl with all the machines generating SBOM
+sudo zypper -nq install perl-JSON
+
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
 echo "GCC = $gccVersion" >> versions.txt
 
 OpenSSLVersion="$(openssl version |cut -b 9-14)"

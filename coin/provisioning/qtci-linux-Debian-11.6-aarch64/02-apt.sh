@@ -145,6 +145,7 @@ installPackages+=(libbluetooth-dev)
 installPackages+=(dkms)
 # Needed for qtspeech
 installPackages+=(libspeechd-dev)
+installPackages+=(flite1-dev)
 #Pypdf for PDF reading in RTA tests
 installPackages+=(python3-pypdf2)
 # Needed for b2qt
@@ -260,7 +261,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -q -y install cmake apt-cacher-ng -t
 # Disable keyring password prompt
 keyring --disable
 
-pip install --user -r "${BASH_SOURCE%/*}/../common/shared/sbom_requirements.txt"
+pip install --user -r "${BASH_SOURCE%/*}/../common/shared/requirements.txt"
 
 source "${BASH_SOURCE%/*}/../common/unix/SetEnvVar.sh"
 

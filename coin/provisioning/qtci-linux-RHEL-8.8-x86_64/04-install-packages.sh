@@ -12,6 +12,8 @@ sudo yum -y remove PackageKit gnome-software
 sudo yum -y update
 
 installPackages=()
+# Make sure needed ca-certificates are available
+installPackages+=(ca-certificates)
 installPackages+=(git)
 installPackages+=(zlib-devel)
 installPackages+=(glib2-devel)
@@ -67,8 +69,9 @@ installPackages+=(libva-devel)
 installPackages+=(gtk3-devel)
 # libusb1 for tqtc-boot2qt/qdb
 installPackages+=(libusbx-devel)
-# speech-dispatcher-devel for QtSpeech, otherwise it has no backend on Linux
+# speech-dispatcher-devel / flite-devel for QtSpeech
 installPackages+=(speech-dispatcher-devel)
+installPackages+=(flite-devel)
 # Python 3.8 for pyside. Qt for Python support for Python 3.6 will be deprecated in within pyside6.3
 installPackages+=(python3.11)
 installPackages+=(python3.11-pip)
@@ -146,8 +149,6 @@ installPackages+=(open-vm-tools)
 # cifs-utils, for mounting smb drive
 installPackages+=(keyutils)
 installPackages+=(cifs-utils)
-# used for reading vcpkg packages version, from vcpkg.json
-installPackages+=(jq)
 # zip, needed for vcpkg caching
 installPackages+=(zip)
 # OpenSSL requirement, built by vcpkg
@@ -169,13 +170,16 @@ sudo pip config --user set global.extra-index-url https://pypi.org/simple/
 sudo pip3 install virtualenv wheel
 # Just make sure we have virtualenv to run with python3.8 -m virtualenv
 sudo python3.11 -m pip install virtualenv wheel
-sudo python3.11 -m pip install -r "${BASH_SOURCE%/*}/../common/shared/sbom_requirements.txt"
+sudo python3.11 -m pip install -r "${BASH_SOURCE%/*}/../common/shared/requirements.txt"
 # For now we don't set QT_SBOM_PYTHON_APPS_PATH here, and rely on the build system to find the
 # system python3.11.
 
 sudo /usr/bin/pip3 install wheel
 sudo /usr/bin/pip3 install dataclasses
-# No sbom_requirements.txt, because it requires Python 3.9 for poetry_core -> spdx_tools and we have 3.8
+sudo /usr/bin/pip3 install -r "${BASH_SOURCE%/*}/../common/shared/requirements.txt"
+
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
+echo "GCC = $gccVersion" >> versions.txt
 
 OpenSSLVersion="$(openssl3 version |cut -b 9-14)"
 echo "System's OpenSSL = $OpenSSLVersion" >> ~/versions.txt

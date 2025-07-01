@@ -8,15 +8,15 @@ source "${BASH_SOURCE%/*}/SetEnvVar.sh"
 # shellcheck source=./DownloadURL.sh
 source "${BASH_SOURCE%/*}/DownloadURL.sh"
 
-version="3.1.56"
-versionNode="v16.20.0"
+version="4.0.7"
+versionNode="v20.18.0"
 tarBallVersion="${version//./_}"
 if uname -a | grep -q Darwin; then
     tarBallPackage="emsdk_macos_${tarBallVersion}.tar.gz"
-    sha="24c49db971da4fd7c68f6b71984c3d7775fdfb84"
+    sha="c3d2df45685b68e5d69e09017084d26783eda2dd"
 else
     tarBallPackage="emsdk_linux_${tarBallVersion}.tar.gz"
-    sha="410c93bb2ab3b244190c2cb5f0ff1ce5d6ac4eb5"
+    sha="20f7782ca4a9088fe91405b16c6fed630e91dcd6"
 fi
 cacheUrl="https://ci-files01-hki.ci.qt.io/input/emsdk/${tarBallPackage}"
 target="/tmp/${tarBallPackage}"
@@ -53,5 +53,6 @@ SetEnvVar "PATH" "\"\$PATH:${emscriptenPath}\""
 SetEnvVar "EMSCRIPTEN" "${emscriptenPath}"
 SetEnvVar "EMSDK" "${emsdkPath}"
 SetEnvVar "EMSDK_NODE" "${emsdkPath}${pathNodeExecutable}"
+SetEnvVar "EMSDK_PYTHON" "$PYTHON3_EXECUTABLE"
 
 echo "Emsdk = $version" >> ~/versions.txt

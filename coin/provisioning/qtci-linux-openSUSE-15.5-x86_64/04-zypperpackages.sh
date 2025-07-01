@@ -76,9 +76,6 @@ sudo zypper -nq install zip
 # OpenSSL 3
 sudo zypper -nq install openssl-3
 
-# used for reading vcpkg packages version, from vcpkg.json
-sudo zypper -nq install jq
-
 # Valgrind (Needed for testlib selftests)
 sudo zypper -nq install valgrind-devel
 
@@ -91,7 +88,7 @@ sudo zypper -nq install libtommath-devel
 # Java
 sudo zypper -nq install java-17-openjdk
 
-gccVersion="$(gcc --version |grep gcc |cut -b 17-23)"
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
 echo "GCC = $gccVersion" >> versions.txt
 
 OpenSSLVersion="$(openssl-3 version |cut -b 9-14)"

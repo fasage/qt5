@@ -92,9 +92,6 @@ sudo zypper -nq update open-vm-tools
 # Tools to build Git
 sudo zypper -nq install autoconf libcurl-devel libexpat-devel
 
-# used for reading vcpkg packages version, from vcpkg.json
-sudo zypper -nq install jq
-
 # zip, needed for vcpkg caching
 sudo zypper -nq install zip
 
@@ -110,7 +107,10 @@ sudo zypper -nq install cifs-utils
 # For Firebird in RTA
 sudo zypper -nq install libtommath-devel
 
-gccVersion="$(gcc --version |grep gcc |cut -b 17-23)"
+# For tst_license.pl with all the machines generating SBOM
+sudo zypper -nq install perl-JSON
+
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
 echo "GCC = $gccVersion" >> versions.txt
 
 OpenSSLVersion="$(openssl-3 version |cut -b 9-14)"

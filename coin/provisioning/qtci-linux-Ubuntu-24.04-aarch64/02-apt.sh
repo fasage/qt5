@@ -179,6 +179,7 @@ installPackages+=(libopenal-dev)
 installPackages+=(libbluetooth-dev)
 # Needed for qtspeech
 installPackages+=(libspeechd-dev)
+installPackages+=(flite1-dev)
 #Pypdf for PDF reading in RTA tests
 installPackages+=(python3-pypdf2)
 # Needed for b2qt
@@ -225,8 +226,6 @@ installPackages+=(keyutils)
 installPackages+=(cifs-utils)
 # VxWorks QEMU network setup (tunctl)
 installPackages+=(uml-utilities)
-# used for reading vcpkg packages version, from vcpkg.json
-installPackages+=(jq)
 # For building
 installPackages+=(cmake)
 # extra linkers
@@ -250,7 +249,7 @@ pip config --user set global.index https://ci-files01-hki.ci.qt.io/input/python_
 pip config --user set global.extra-index-url https://pypi.org/simple/
 # Ubuntu 24.04 comes with a newer pip that disallows installing into the system site-packages,
 # so we explicitly ask it to allow it.
-pip install --user -r "${BASH_SOURCE%/*}/../common/shared/sbom_requirements.txt" --break-system-packages
+pip install --user -r "${BASH_SOURCE%/*}/../common/shared/requirements.txt" --break-system-packages
 
 source "${BASH_SOURCE%/*}/../common/unix/SetEnvVar.sh"
 # SetEnvVar "PATH" "/usr/lib/nodejs-mozilla/bin:\$PATH"
@@ -259,6 +258,9 @@ source "${BASH_SOURCE%/*}/../common/unix/SetEnvVar.sh"
 # 'The script sbom2doc is installed in '/home/qt/.local/bin' which is not on PATH.'
 # hence the explicit assignment to SBOM_PYTHON_APPS_PATH.
 SetEnvVar "SBOM_PYTHON_APPS_PATH" "/home/qt/.local/bin"
+
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
+echo "GCC = $gccVersion" >> versions.txt
 
 OpenSSLVersion="$(openssl version |cut -b 9-14)"
 echo "System's OpenSSL = $OpenSSLVersion" >> ~/versions.txt

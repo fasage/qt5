@@ -12,6 +12,8 @@ sudo yum -y remove PackageKit gnome-software
 sudo yum -y update
 
 installPackages=()
+# Make sure needed ca-certificates are available
+installPackages+=(ca-certificates)
 installPackages+=(git)
 installPackages+=(zlib-devel)
 installPackages+=(glib2-devel)
@@ -67,8 +69,9 @@ installPackages+=(libva-devel)
 installPackages+=(gtk3-devel)
 # libusb1 for tqtc-boot2qt/qdb
 installPackages+=(libusbx-devel)
-# speech-dispatcher-devel for QtSpeech, otherwise it has no backend on Linux
+# speech-dispatcher-devel / flite-devel for QtSpeech
 installPackages+=(speech-dispatcher-devel)
+installPackages+=(flite-devel)
 # Python for pyside
 installPackages+=(python3.11)
 installPackages+=(python3.11-pip)
@@ -116,6 +119,7 @@ installPackages+=(libxkbcommon-devel)
 installPackages+=(libxkbcommon-x11-devel)
 # xcb-util-* libraries
 installPackages+=(xcb-util)
+installPackages+=(xcb-util-devel)
 installPackages+=(xcb-util-image-devel)
 installPackages+=(xcb-util-keysyms-devel)
 installPackages+=(xcb-util-wm-devel)
@@ -145,14 +149,14 @@ installPackages+=(open-vm-tools)
 # cifs-utils, for mounting smb drive
 installPackages+=(keyutils)
 installPackages+=(cifs-utils)
-# used for reading vcpkg packages version, from vcpkg.json
-installPackages+=(jq)
 # zip, needed for vcpkg caching
 installPackages+=(zip)
 # OpenSSL requirement, built by vcpkg
 installPackages+=(perl-IPC-Cmd)
 # password management support for Qt Creator
 installPackages+=(libsecret-devel)
+# For tst_license.pl with all the machines generating SBOM
+installPackages+=(perl-JSON)
 
 sudo yum -y install "${installPackages[@]}"
 
@@ -167,12 +171,15 @@ sudo pip config --user set global.extra-index-url https://pypi.org/simple/
 
 sudo pip3 install virtualenv wheel
 sudo python3.11 -m pip install virtualenv wheel html5lib
-sudo python3.11 -m pip install -r "${BASH_SOURCE%/*}/../common/shared/sbom_requirements.txt"
+sudo python3.11 -m pip install -r "${BASH_SOURCE%/*}/../common/shared/requirements.txt"
 # For now we don't set QT_SBOM_PYTHON_APPS_PATH here, and rely on the build system to find the
 # system python3.11.
 
 sudo /usr/bin/pip3 install wheel
 sudo /usr/bin/pip3 install dataclasses
+
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
+echo "GCC = $gccVersion" >> versions.txt
 
 OpenSSLVersion="$(openssl3 version |cut -b 9-14)"
 echo "System's OpenSSL = $OpenSSLVersion" >> ~/versions.txt
